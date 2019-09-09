@@ -20,6 +20,22 @@ export default function reducer(state, {type, payload}){
                 isAuth: false,
                 currentUser: null
             }
+        case "CREATE_PIN":
+            return {
+                ...state,
+                draftPins: {
+                    latitude: 0.0,
+                    longitude: 0.0
+                }
+            }
+        case "UPDATE_PIN":
+            return {
+                ...state,
+                draftPins: {
+                    latitude: payload.latitude,
+                    longitude: payload.longitude
+                }
+            }
         default:
             return state
     }

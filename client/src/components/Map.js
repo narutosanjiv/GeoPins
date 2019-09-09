@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import ReactMapGL, {NavigationControl, Marker } from 'react-map-gl'
+import PinIcon from './PinIcon'
+import Context from '../context'
 // import Button from "@material-ui/core/Button";
 // import Typography from "@material-ui/core/Typography";
 // import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
@@ -13,15 +15,17 @@ const INITIAL_STATE={
 
 const Map = ({ classes }) => {
   const token = "pk.eyJ1IjoibmFydXRvc2Fuaml2IiwiYSI6ImNrMGN0YmxkaTAwdHUzbG96ZjEzcW03ZWgifQ.lMKC5IEdLbiJyrKMyjCwpw"
-  const [state, setViewPortState] = useState(INITIAL_STATE)
+  const [viewPortstate, setViewPortState] = useState(INITIAL_STATE)
   const [userPosition, setUserPosition] = useState(null)
+  const { state, dispatch } = useContext(Context)
+
   useEffect(() => {
     if("geolocation" in navigator){
       navigator.geolocation.getCurrentPosition((pos) => {
         const { longitude, latitude } = pos.coords
         setUserPosition({latitude, longitude})
         setViewPortState({
-          ...state, 
+          ...viewPortstate, 
           latitude, 
           longitude
         })
@@ -29,6 +33,23 @@ const Map = ({ classes }) => {
     }
   }, [])
   
+
+  const handlerClick = ({ lngLat, leftButton }) => {
+
+    if(!leftButton) return 
+    if(!state.draftPins){
+      dispatch({type: 'CREATE_PIN'})
+    }
+    const [ longitude, latitude ] = lngLat
+    dispatch({
+      type: 'UPDATE_PIN',
+      payload: {
+        longitude,
+        latitude
+      }
+    })
+  }
+
   return (
       <div className={classes.root}>
         <ReactMapGL 
@@ -36,10 +57,11 @@ const Map = ({ classes }) => {
           height="calc(100vh - 64px)"
           mapStyle="mapbox://styles/mapbox/satellite-v9"
           mapboxApiAccessToken={token}
-          {...state}
+          {...viewPortstate}
           onViewportChange={(newViewPort) => {
             setViewPortState(newViewPort)
           }}
+          onClick={handlerClick}
         >
           <div className={classes.navigationControl}>
             <NavigationControl onViewportChange={(newViewPort) => {
@@ -47,9 +69,14 @@ const Map = ({ classes }) => {
             }}/>
           </div>
 
-          { userPosition && <Marker latitude={userPosition.latitude} longitude={userPosition.longitude} offsetLeft={37} offsetTop={20}>
-            <div>You are here</div>
+          { userPosition && <Marker latitude={userPosition.latitude} longitude={userPosition.longitude} offsetLeft={-19} offsetTop={-37}>
+            <PinIcon size="38" color="red"/>
           </Marker> }
+
+          { state.draftPins && <Marker latitude={state.draftPins.latitude} longitude={state.draftPins.longitude} offsetLeft={-19} offsetTop={-37}>
+              <PinIcon size="38" color="hotpink"/>
+            </Marker>
+          }
         </ReactMapGL>
       </div>
 
