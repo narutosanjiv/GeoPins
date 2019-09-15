@@ -6,6 +6,7 @@ import Blog from './Blog'
 import Context from '../context'
 import { GET_PINS_QUERY } from '../graphql/queries'
 import { useClient } from '../client'
+import differenceInMinutes from 'date-fns/difference_in_minutes'
 // import Button from "@material-ui/core/Button";
 // import Typography from "@material-ui/core/Typography";
 // import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
@@ -63,6 +64,11 @@ const Map = ({ classes }) => {
     })
   }
 
+  const highlightNewPin = pin => {
+    const isNewPin = differenceInMinutes(Date.now(), Number(pin.createdAt)) <= 30
+    return isNewPin ? "limegreen" : "darkblue"
+  }
+
   const { pins } = state
   return (
       <div className={classes.root}>
@@ -94,7 +100,7 @@ const Map = ({ classes }) => {
           {
             pins.map((pin) => (
               <Marker key={pin._id} latitude={pin.latitude} longitude={pin.longitude} offsetLeft={-19} offsetTop={-37}>
-                <PinIcon size="38" color="darkblue"/>
+                <PinIcon size="38" color={highlightNewPin(pin)}/>
               </Marker>
             ))
           }
