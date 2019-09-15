@@ -20,13 +20,26 @@ export default function reducer(state, {type, payload}){
                 isAuth: false,
                 currentUser: null
             }
-        case "CREATE_PIN":
+        case "CREATE_DRAFT_PIN":
             return {
                 ...state,
                 draftPins: {
                     latitude: 0.0,
                     longitude: 0.0
                 }
+            }
+        
+        
+        case "CREATE_PIN":
+            const previous_pins = state.pins.filter( (pin) => pin._id != payload._id)
+            const new_pin = payload
+            return {
+                ...state,
+                pins: [
+                        ...previous_pins,
+                        new_pin
+                    ]
+                
             }
         case "GET_PINS":
             return {

@@ -16,6 +16,8 @@ export const GET_PINS_QUERY=`
       title
       image
       content
+      latitude
+      longitude
       author{
         _id
         email

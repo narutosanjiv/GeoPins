@@ -51,7 +51,7 @@ const Map = ({ classes }) => {
     console.log(leftButton)
     if(!leftButton) return 
     if(!state.draftPins){
-      dispatch({type: 'CREATE_PIN'})
+      dispatch({type: 'CREATE_DRAFT_PIN'})
     }
     const [ longitude, latitude ] = lngLat
     dispatch({
@@ -63,6 +63,7 @@ const Map = ({ classes }) => {
     })
   }
 
+  const { pins } = state
   return (
       <div className={classes.root}>
         <ReactMapGL 
@@ -90,7 +91,15 @@ const Map = ({ classes }) => {
               <PinIcon size="38" color="hotpink"/>
             </Marker>
           }
+          {
+            pins.map((pin) => (
+              <Marker key={pin._id} latitude={pin.latitude} longitude={pin.longitude} offsetLeft={-19} offsetTop={-37}>
+                <PinIcon size="38" color="darkblue"/>
+              </Marker>
+            ))
+          }
         </ReactMapGL>
+
         <Blog />
       </div>
 
