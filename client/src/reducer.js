@@ -28,6 +28,16 @@ export default function reducer(state, {type, payload}){
                     longitude: 0.0
                 }
             }
+        case "GET_PINS":
+            return {
+                ...state,
+                pins: payload
+            }
+        case "DELETE_DRAFT":
+            return {
+                ...state,
+                draftPins: null
+            }
         case "UPDATE_PIN":
             return {
                 ...state,
