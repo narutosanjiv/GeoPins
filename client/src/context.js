@@ -4,7 +4,8 @@ const Context = createContext({
     currentUser: null,
     isAuth: false,
     draftPins: null,
-    pins: []
+    pins: [],
+    currentPin: null
 })
 
 export default Context

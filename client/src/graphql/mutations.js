@@ -23,3 +23,12 @@ export const CREATE_PIN_MUTATION=`
         }
     }
 `
+export const DELETE_PIN_MUTATION=`
+    mutation($PinId: ID!){
+        deletePin(input: {
+            PinId: $PinId
+        }){
+            _id
+        }
+    }
+`

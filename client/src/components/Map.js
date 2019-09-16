@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useContext } from "react";
 import { withStyles } from "@material-ui/core/styles";
-import ReactMapGL, {NavigationControl, Marker } from 'react-map-gl'
+import ReactMapGL, {NavigationControl, Marker, Popup } from 'react-map-gl'
 import PinIcon from './PinIcon'
 import Blog from './Blog'
 import Context from '../context'
 import { GET_PINS_QUERY } from '../graphql/queries'
+import { DELETE_PIN_MUTATION  } from '../graphql/mutations'
 import { useClient } from '../client'
 import differenceInMinutes from 'date-fns/difference_in_minutes'
-// import Button from "@material-ui/core/Button";
+import { Typography } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
 // import Typography from "@material-ui/core/Typography";
-// import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
+import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
 
 const INITIAL_STATE={
   longitude: 78.3351861,
@@ -70,6 +72,20 @@ const Map = ({ classes }) => {
   }
 
   const { pins } = state
+  const [ popup, setPopUp] = useState(null)
+
+  const handleSelectPin = pin => {
+    setPopUp(pin)
+    dispatch({ type: 'SET_PIN', payload: pin})
+  }
+
+  const handleDeletePin = async pin => {
+    alert('deleted Pin')
+    const variables = {PinId: pin._id}
+    const data = await client.request(DELETE_PIN_MUTATION, variables)    
+    console.log(data)
+  }
+
   return (
       <div className={classes.root}>
         <ReactMapGL 
@@ -83,26 +99,58 @@ const Map = ({ classes }) => {
           }}
           onClick={handlerClick}
         >
+           {/*  Mapbox navigation control  */}
           <div className={classes.navigationControl}>
             <NavigationControl onViewportChange={(newViewPort) => {
               setViewPortState(newViewPort)
             }}/>
           </div>
-
+           {/*  User current location  */}
           { userPosition && <Marker latitude={userPosition.latitude} longitude={userPosition.longitude} offsetLeft={-19} offsetTop={-37}>
             <PinIcon size="38" color="red"/>
           </Marker> }
+
+           {/*  drafted Pin  */}
 
           { state.draftPins && <Marker latitude={state.draftPins.latitude} longitude={state.draftPins.longitude} offsetLeft={-19} offsetTop={-37}>
               <PinIcon size="38" color="hotpink"/>
             </Marker>
           }
+           {/*  User Created Pins  */}
           {
             pins.map((pin) => (
-              <Marker key={pin._id} latitude={pin.latitude} longitude={pin.longitude} offsetLeft={-19} offsetTop={-37}>
-                <PinIcon size="38" color={highlightNewPin(pin)}/>
+              <Marker 
+                key={pin._id} 
+                latitude={pin.latitude} 
+                longitude={pin.longitude} 
+                offsetLeft={-19} 
+                offsetTop={-37}
+              >
+                  <PinIcon size="38" color={highlightNewPin(pin)} onClick={(event) => handleSelectPin(pin)}/>
               </Marker>
             ))
+          }
+          {/*  show popup based on pin click  */}
+          {
+            popup && <Popup
+              latitude={popup.latitude}
+              longitude={popup.longitude}
+              closeButton={true}
+              closeOnClick={false}
+              // onClose={() => setPopUp(null)}
+              anchor="top"
+            >
+              <img src={popup.image} className={classes.popupImage} alt={popup.title} />
+
+              <div className={classes.popupTab}>
+                <Typography>
+                  {popup.latitude}, {popup.longitude}
+                </Typography>
+                <Button className={classes.deleteIcon} onClick={(event) => handleDeletePin(popup)}>
+                  <DeleteIcon />
+                </Button>
+              </div>
+            </Popup>
           }
         </ReactMapGL>
 

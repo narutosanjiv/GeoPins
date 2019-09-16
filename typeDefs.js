@@ -33,6 +33,10 @@ module.exports = gql`
         longitude: Float 
     }
 
+    input PinId {
+        PinId: ID
+    }
+
     type Query{
         me: User
         getPins: [Pin!]
@@ -40,5 +44,6 @@ module.exports = gql`
 
     type Mutation{
         createPin(input: CreatePinInput!): Pin
+        deletePin(input: PinId!): Pin
     }
 `

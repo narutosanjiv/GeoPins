@@ -51,7 +51,6 @@ const CreatePin = ({ classes }) => {
   }
 
   const handleDiscard = (event) => {
-    console.log('deleting drafted pins')
     setTitle("")
     setContent("")
     setImage("")
