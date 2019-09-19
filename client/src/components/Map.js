@@ -10,7 +10,6 @@ import { useClient } from '../client'
 import differenceInMinutes from 'date-fns/difference_in_minutes'
 import { Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-// import Typography from "@material-ui/core/Typography";
 import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
 
 const INITIAL_STATE={
@@ -27,9 +26,7 @@ const Map = ({ classes }) => {
   const client = useClient()
   const get_pins = async () => {
     const { getPins } = await client.request(GET_PINS_QUERY)
-    console.log("getPins")
     dispatch({ type: 'GET_PINS', payload: getPins })
-    console.log(getPins)
   }
 
   useEffect(() => {
@@ -74,6 +71,8 @@ const Map = ({ classes }) => {
   const { pins } = state
   const [ popup, setPopUp] = useState(null)
 
+  const isAuthUser = (pop) => (state.currentUser._id === pop.author._id)
+
   const handleSelectPin = pin => {
     setPopUp(pin)
     dispatch({ type: 'SET_PIN', payload: pin})
@@ -82,8 +81,9 @@ const Map = ({ classes }) => {
   const handleDeletePin = async pin => {
     alert('deleted Pin')
     const variables = {PinId: pin._id}
-    const data = await client.request(DELETE_PIN_MUTATION, variables)    
-    console.log(data)
+    const { deletePin } = await client.request(DELETE_PIN_MUTATION, variables)    
+    dispatch( { type: 'DELETE_PIN', payload: deletePin })
+    setPopUp(null)
   }
 
   return (
@@ -137,18 +137,20 @@ const Map = ({ classes }) => {
               longitude={popup.longitude}
               closeButton={true}
               closeOnClick={false}
-              // onClose={() => setPopUp(null)}
+              onClose={() => setPopUp(null)}
               anchor="top"
             >
               <img src={popup.image} className={classes.popupImage} alt={popup.title} />
 
               <div className={classes.popupTab}>
                 <Typography>
-                  {popup.latitude}, {popup.longitude}
+                  {popup.latitude.toFixed(6)}, {popup.longitude.toFixed(6)}
                 </Typography>
-                <Button className={classes.deleteIcon} onClick={(event) => handleDeletePin(popup)}>
-                  <DeleteIcon />
-                </Button>
+               {
+                  isAuthUser(popup) && <Button onClick={(event) => handleDeletePin(popup)}>
+                    < DeleteIcon className={classes.DeleteIcon}/> 
+                  </Button>
+               } 
               </div>
             </Popup>
           }

@@ -60,6 +60,13 @@ export default function reducer(state, {type, payload}){
                     longitude: payload.longitude
                 }
             }
+        case "DELETE_PIN":
+            const pins = state.pins.filter( (pin) => pin._id != payload._id)
+            return {
+                ...state,
+                pins,
+                currentPin: null
+            }
         case "SET_PIN":
             return {
                 ...state,
