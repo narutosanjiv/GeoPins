@@ -32,3 +32,13 @@ export const DELETE_PIN_MUTATION=`
         }
     }
 `
+export const CREATE_COMMENT_MUTATION=`
+    mutation($PinId: ID!, $text: String!){
+        createComment(input: {
+            PinId: $PinId,
+            text: $text 
+        }){
+            _id
+        }
+    }
+`

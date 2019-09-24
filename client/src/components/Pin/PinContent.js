@@ -34,7 +34,7 @@ const PinContent = ({ classes }) => {
       </Typography>
       { /*  Pin Comments  */}
       <CreateComment />
-      <Comments />
+      <Comments comments={comments}/>
     </div>
  );
 };

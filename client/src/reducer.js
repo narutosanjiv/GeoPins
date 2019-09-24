@@ -73,6 +73,11 @@ export default function reducer(state, {type, payload}){
                 currentPin: payload,
                 draftPins: null
             }
+        case "CREATE_COMMENT":
+            return {
+                ...state,
+                currentPin: payload
+            }
         default:
             return state
     }
