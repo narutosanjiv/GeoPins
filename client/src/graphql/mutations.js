@@ -59,6 +59,7 @@ export const CREATE_COMMENT_MUTATION=`
                     email
                     picture
                 }
+                createdAt
             }
         }
     }
