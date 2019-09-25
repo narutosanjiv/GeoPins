@@ -22,17 +22,17 @@ const CreateComment = ({ classes }) => {
       PinId: currentPin._id
     }
     const res = await client.request(CREATE_COMMENT_MUTATION, variables)
-    dispatch({ type: "CREATE_COMMENT", payload: res.data })
+    dispatch({ type: "CREATE_COMMENT", payload: res.createComment })
     setComment("")
   }
 
   return <>
     <form className={classes.form} >
-      <IconButton>
+      <IconButton disabled={!comment.trim()} onClick={() => setComment("") } className={classes.clearButton}>
         <ClearIcon />
       </IconButton>
-      <InputBase className={classes.input} placeholder="Add Comment" multiline={true} onChange={(e) => setComment(e.target.value)}/>
-      <IconButton onClick={handleSubmit}>
+      <InputBase className={classes.input} placeholder="Add Comment"  value={comment} multiline={true} onChange={(e) => setComment(e.target.value)}/>
+      <IconButton disabled={!comment.trim()} className={classes.sendButton} onClick={handleSubmit}>
         <SendIcon />
       </IconButton>
     </form>

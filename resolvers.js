@@ -30,7 +30,7 @@ module.exports = {
         }),
         createComment: authenticated(async (root, args, ctx, info) => {
             const comment = {text: args.input.text, author: ctx.currentUser._id}
-            const Pin = await Pin.findOneAndUpdate(
+            const pin = await Pin.findOneAndUpdate(
                 {_id: args.input.PinId},
                 {
                     $push: {
@@ -41,7 +41,9 @@ module.exports = {
                     new: true
                 }
             )
-            return Pin
+            .populate("author")
+            .populate("comments.author")
+            return pin
         })
      }
 }

@@ -39,6 +39,27 @@ export const CREATE_COMMENT_MUTATION=`
             text: $text 
         }){
             _id
+            createdAt
+            title
+            image
+            content
+            latitude
+            longitude
+            author {
+                _id
+                name
+                email
+                picture
+            }
+            comments {
+                text
+                author {
+                    _id
+                    name
+                    email
+                    picture
+                }
+            }
         }
     }
 `
