@@ -19,7 +19,7 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 
 const wsLink = new WebSocketLink({
-  url: 'ws://localhost:4000/graphql',
+  uri: 'ws://localhost:4000/graphql',
   options: {
     reconnect: true
   }
@@ -34,17 +34,19 @@ const Root = () => {
   const initialState = useContext(Context)
   const [state, dispatch] = useReducer(Reducer, initialState)
   return (
-    <Context.Provider value={{state, dispatch }}>
-      <ApolloProvider client={client}>
+    
+      
         <Router>
-          <Switch>
-            <ProtectedRoute exact path="/" component={App} />
-            <Route path="/login" component={Splash} />
-          </Switch>
+        <ApolloProvider client={client}>
+          <Context.Provider value={{state, dispatch }}>
+            <Switch>
+              <ProtectedRoute exact path="/" component={App} />
+              <Route path="/login" component={Splash} />
+            </Switch>
+          </Context.Provider>
+          </ApolloProvider>
         </Router>
-      </ApolloProvider>
 
-    </Context.Provider>
 
   );
 };

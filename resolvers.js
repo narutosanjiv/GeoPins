@@ -52,7 +52,7 @@ module.exports = {
             .populate("author")
             .populate("comments.author")
             pubSub.publish(PIN_UPDATED, { pinUpdated })
-            return pin
+            return pinUpdated
         })
      },
      Subscription: {

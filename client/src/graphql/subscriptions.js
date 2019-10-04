@@ -16,6 +16,45 @@ export const PIN_ADDED_SUBSCRIPTION=gql`
                 email
                 picture
             }
+            comments{
+                text
+            }
         }
     }
+`
+export const PIN_UPDATED_SUBSCRIPTION=gql`
+subscription{
+    pinUpdated{
+        _id
+        createdAt
+        title
+        image
+        content
+        latitude
+        longitude
+        author {
+            _id
+            name
+            email
+            picture
+        }
+        comments {
+            text
+            author {
+                _id
+                name
+                email
+                picture
+            }
+            createdAt
+        }
+    }
+}
+`
+export const PIN_DELETED_SUBSCRIPTION=gql`
+subscription{
+    pinDeleted{
+        _id
+    }
+}
 `

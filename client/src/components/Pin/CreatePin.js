@@ -39,8 +39,6 @@ const CreatePin = ({ classes }) => {
       const { latitude, longitude } = state.draftPins
       const variables = {title, image: url, content, latitude, longitude}
       const { createPin } = await client.request(CREATE_PIN_MUTATION, variables) 
-      dispatch({ type: 'CREATE_PIN', payload: createPin })
-      console.log("Pin Created: {}", { createPin })
       handleDiscard(event)
     } catch (err){
       setSubmitting(false)

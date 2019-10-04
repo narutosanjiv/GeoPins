@@ -6,11 +6,13 @@ import Blog from './Blog'
 import Context from '../context'
 import { GET_PINS_QUERY } from '../graphql/queries'
 import { DELETE_PIN_MUTATION  } from '../graphql/mutations'
+import { PIN_ADDED_SUBSCRIPTION, PIN_UPDATED_SUBSCRIPTION, PIN_DELETED_SUBSCRIPTION } from '../graphql/subscriptions'
 import { useClient } from '../client'
 import differenceInMinutes from 'date-fns/difference_in_minutes'
 import { Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
+import { Subscription } from "react-apollo"
 
 const INITIAL_STATE={
   longitude: 78.3351861,
@@ -81,8 +83,8 @@ const Map = ({ classes }) => {
   const handleDeletePin = async pin => {
     alert('deleted Pin')
     const variables = {PinId: pin._id}
-    const { deletePin } = await client.request(DELETE_PIN_MUTATION, variables)    
-    dispatch( { type: 'DELETE_PIN', payload: deletePin })
+    await client.request(DELETE_PIN_MUTATION, variables)    
+    
     setPopUp(null)
   }
 
@@ -155,7 +157,33 @@ const Map = ({ classes }) => {
             </Popup>
           }
         </ReactMapGL>
+        <Subscription 
+          subscription={PIN_ADDED_SUBSCRIPTION}
+          
+          onSubscriptionData={({ subscriptionData}) => {
+            console.log("subscriptionData", subscriptionData)
+            const { pinAdded } = subscriptionData.data
+            dispatch({ type: 'CREATE_PIN', payload: pinAdded })
 
+          }}
+        />
+        <Subscription 
+        subscription={PIN_UPDATED_SUBSCRIPTION}
+        onSubscriptionData={({ subscriptionData}) => {
+          console.log("subscriptionData", subscriptionData)
+          const { pinUpdated } = subscriptionData.data
+          dispatch({ type: 'CREATE_COMMENT', payload: pinUpdated })
+
+        }}
+      />
+      <Subscription 
+      subscription={PIN_DELETED_SUBSCRIPTION}
+      onSubscriptionData={({ subscriptionData}) => {
+        console.log("subscriptionData", subscriptionData)
+        const { pinDeleted } = subscriptionData.data
+        dispatch( { type: 'DELETE_PIN', payload: pinDeleted })
+      }}
+    />
         <Blog />
       </div>
 
